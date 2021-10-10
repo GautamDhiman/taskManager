@@ -1,20 +1,57 @@
-const seeAll = (req, res) => {
-    res.send('All Tasks');
+const { Task } = require('./models/tasks');
+
+const seeAll = async (req, res) => {
+    
+    try {
+        const task = await Task.find({});
+        res.status(200).json({task});
+    } catch (err) {
+        res.status(500).json({ "msg" : "Not found"})
+    }
 }
 
-const getSingle = (req, res) => {
-    res.send('Get single product');
+const getSingle = async (req, res) => {
+    try {
+        const { id: TaskID } = req.params;
+        const task = await Task.findOne({ _id : TaskID});
+
+        if(!task)
+        {
+            return res.status(201).json({ "msg" : "Not found"};)
+        }
+
+        res.status(200).json({ task });
+    } catch (err) {
+        res.status(500).json({ "msg" : "Not found"});
+    }
 }
 
-const updateTask = (req, res) => {
-    res.send('updated');
+const updateTask = async (req, res) => {
+    try {
+        const {id : TaskID} = req.params;
+        const task = await Task.findOneAndUpdate({ _id: TaskID }, req.body, {
+            new: true,
+            runValidators: true
+        });
+
+        res.status(200).json({task});
+
+    } catch (err) {
+        res.status(500).json({ "msg" : "Not found"});
+    }
 }
-const deleteTask = (req, res) => {
-    res.send('deleted task');
+const deleteTask = async (req, res) => {
+    try {
+        const { id: TaskID } = req.params;
+        const task = await Task.delete({_d : TaskID});
+        res.status(200).json({task});
+    } catch (err) {
+        res.status(500).json({ "msg" : "Not found"});
+    }
 }
-const addTask = (req, res) => {
-    const task = req.body;
-    res.json(task.name);
+const addTask = async (req, res) => {
+    const added = await Task.create(req.body);
+    res.status(200).json({added});
 }
 
 module.exports = {
