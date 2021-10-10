@@ -3,14 +3,14 @@ const Task = require('../models/tasks');
 const seeAll = async (req, res) => {
     
     try {
-        const task = await Task.find({});
+        const tasks = await Task.find({});
         
-        if(!task)
+        if(!tasks)
         {
             return res.status(201).send('Nothing here')
         }
         
-        res.status(200).json({task});
+        res.status(200).json({tasks});
 
     } catch (err) {
         console.log(err);
