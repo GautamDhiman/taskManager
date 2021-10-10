@@ -1,12 +1,20 @@
-const { Task } = require('./models/tasks');
+const Task = require('../models/tasks');
 
 const seeAll = async (req, res) => {
     
     try {
         const task = await Task.find({});
+        
+        if(!task)
+        {
+            return res.status(201).send('Nothing here')
+        }
+        
         res.status(200).json({task});
+
     } catch (err) {
-        res.status(500).json({ "msg" : "Not found"})
+        console.log(err);
+        res.status(500).json(err)
     }
 }
 
@@ -17,7 +25,7 @@ const getSingle = async (req, res) => {
 
         if(!task)
         {
-            return res.status(201).json({ "msg" : "Not found"};)
+            return res.status(201).json({ "msg" : "Not found"})
         }
 
         res.status(200).json({ task });
@@ -43,15 +51,20 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
     try {
         const { id: TaskID } = req.params;
-        const task = await Task.delete({_d : TaskID});
+        const task = await Task.deleteOne({_d : TaskID});
         res.status(200).json({task});
     } catch (err) {
         res.status(500).json({ "msg" : "Not found"});
     }
 }
 const addTask = async (req, res) => {
-    const added = await Task.create(req.body);
-    res.status(200).json({added});
+    try {
+        const added = await Task.create(req.body);
+        res.status(200).json({added});
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ "msg" : "Not found"});
+    }
 }
 
 module.exports = {
